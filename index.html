@@ -26,22 +26,153 @@
         }
 
         .header {
-            background: white;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
             border-radius: 15px;
-            padding: 30px;
+            overflow: hidden;
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .header h1 {
-            color: #1e3c72;
+        .nav-toolbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu-item {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 15px;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: auto;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn.active {
+            background: rgba(79, 172, 254, 0.3);
+            border-color: rgba(79, 172, 254, 0.5);
+        }
+
+        .nav-btn.icon-only {
+            padding: 8px;
+            min-width: 32px;
+            justify-content: center;
+        }
+
+        .nav-btn.dropdown {
+            position: relative;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.7rem;
+            margin-left: 4px;
+        }
+
+        .btn-icon {
+            font-size: 1rem;
+        }
+
+        .btn-label {
+            font-size: 0.8rem;
+        }
+
+        .header-content {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            color: white;
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
-        .header p {
-            color: #666;
+        .header-content p {
+            color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-toolbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .nav-menu {
+                gap: 15px;
+            }
+            
+            .nav-right {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                flex: 1;
+                min-width: 80px;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
         }
 
         .dashboard {
@@ -758,13 +889,42 @@
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            height: 400px;
+            height: 600px;
         }
 
         .chart-title {
             color: #1e3c72;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 1.5rem;
+        }
+
+        .portfolio-balance {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .balance-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .balance-change {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .balance-change.positive {
+            color: #28a745;
         }
 
         @media (max-width: 768px) {
@@ -780,20 +940,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Real Estate Portfolio</h1>
-            <p>Track your property investments and portfolio performance</p>
-        </div>
 
         <div class="dashboard">
             <div class="portfolio-summary">
                 <h2>Portfolio Overview</h2>
                 
-                <div class="balance-card">
-                    <h3>Total Portfolio Value</h3>
-                    <div class="amount">$34,000</div>
-                    <div class="change positive">+$4,000 (13.3%) this year</div>
-                </div>
 
                 <div class="balance-card">
                     <h3>Cash Balance</h3>
@@ -1126,27 +1277,28 @@
             </div>
 
             <div class="chart-container">
-                <div class="chart-title">Portfolio Growth Over 2 Years</div>
+                <div class="chart-title">Portfolio Overview</div>
+                <div class="portfolio-balance">
+                    <div class="balance-label">Total Portfolio Value</div>
+                    <div class="balance-amount">$34,000</div>
+                    <div class="balance-change positive">+$4,000 (13.3%)</div>
+                </div>
                 <canvas id="portfolioChart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample data for the last 24 months (2 years)
-        const months = ['Jan 2022', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-                       'Jan 2023', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const portfolioValues = [0, 500, 1200, 2000, 2800, 3600, 4500, 5400, 6300, 7200, 8200, 9200,
-                               10300, 11500, 12700, 14000, 15300, 16700, 18100, 19500, 21000, 22500, 24000, 25500, 27000, 28500, 30000, 31500, 33000, 34000];
-        const cashBalances = [5000, 4500, 4000, 3500, 3000, 2500, 2000, 1500, 1000, 500, 0, 0,
-                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        // Sample data for quarterly periods
+        const quarters = ['Q1 \'24', 'Q2 \'24', 'Q3 \'24', 'Q4 \'24', 'Q1 \'25', 'Q2 \'25', 'Q3 \'25', 'Q4 \'25'];
+        const portfolioValues = [34000, 36500, 39200, 42000, 45000, 48200, 51600, 55200];
 
         // Create the chart
         const ctx = document.getElementById('portfolioChart').getContext('2d');
         const portfolioChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: months,
+                labels: quarters,
                 datasets: [{
                     label: 'Portfolio Value',
                     data: portfolioValues,
@@ -1154,14 +1306,6 @@
                     backgroundColor: 'rgba(79, 172, 254, 0.1)',
                     borderWidth: 3,
                     fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'Cash Balance',
-                    data: cashBalances,
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    borderWidth: 2,
-                    fill: false,
                     tension: 0.4
                 }]
             },
@@ -1178,7 +1322,8 @@
                         title: {
                             display: true,
                             text: 'Month'
-                        }
+                        },
+                        beginAtZero: false
                     },
                     y: {
                         title: {
@@ -1186,6 +1331,8 @@
                             text: 'Value ($)'
                         },
                         beginAtZero: false,
+                        min: 30000,
+                        max: 60000,
                         ticks: {
                             callback: function(value) {
                                 return '$' + (value / 1000).toFixed(0) + 'K';
