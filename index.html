@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Simulator</title>
+    <title>Real Estate Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -14,135 +14,766 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #333;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 20px;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: white;
+            border-radius: 15px;
             padding: 30px;
-            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .header h1 {
+            color: #1e3c72;
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
         .header p {
+            color: #666;
             font-size: 1.1rem;
-            opacity: 0.9;
         }
 
-        .content {
+        .dashboard {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .portfolio-summary {
+            background: white;
+            border-radius: 15px;
             padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .input-section {
-            background: #f8f9fa;
+        .portfolio-summary h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
             padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-        }
-
-        .input-group {
+            border-radius: 12px;
             margin-bottom: 20px;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
+        .balance-card h3 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
+        .balance-card .amount {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .balance-card .change {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .target-widget {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .target-widget h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .target-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .target-info .current {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .target-info .target {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .next-investment-widget {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .next-investment-widget h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .investment-card {
+            border: 1px solid #dee2e6;
             border-radius: 8px;
-            font-size: 16px;
+            padding: 15px;
+        }
+
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .investment-header h4 {
+            color: #1e3c72;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .investment-type {
+            background: #4facfe;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .investment-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .detail-row .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .detail-row .value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .investment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #dee2e6;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e9ecef;
+        }
+
+        .dividends-widget {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dividends-widget h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .dividend-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .dividend-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .dividend-card.monthly {
+            border-left: 4px solid #4facfe;
+        }
+
+        .dividend-card.annual {
+            border-left: 4px solid #28a745;
+        }
+
+        .dividend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .dividend-header h4 {
+            color: #1e3c72;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .dividend-rate {
+            background: #1e3c72;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .dividend-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }
+
+        .dividend-note {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .dividend-calculator {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .dividend-calculator h4 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .calculator-input {
+            margin-bottom: 15px;
+        }
+
+        .calculator-input label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .calculator-input input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
             transition: border-color 0.3s ease;
         }
 
-        .input-group input:focus {
+        .calculator-input input:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
 
-        .calculate-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .results {
+        .calculator-results {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            margin-top: 20px;
+            border-radius: 6px;
+            padding: 15px;
         }
 
-        .result-item {
+        .result-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 8px 0;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-row.highlight {
+            background: #e8f5e8;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .result-amount {
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .result-amount.positive {
+            color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .dividend-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upcoming-events {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .upcoming-events h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-date {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-right: 20px;
+            min-width: 60px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-date .month {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .timeline-date .day {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid #4facfe;
+        }
+
+        .timeline-content h4 {
+            color: #1e3c72;
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .timeline-content p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .portfolio-tabs {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background: #f8f9fa;
             border-bottom: 1px solid #dee2e6;
         }
 
-        .result-item:last-child {
-            border-bottom: none;
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            background: #e9ecef;
+            color: #1e3c72;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #1e3c72;
+            border-bottom-color: #4facfe;
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .portfolio-overview h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .allocation-chart {
+            height: 200px;
+            margin-bottom: 30px;
+        }
+
+        .allocation-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .allocation-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .allocation-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .allocation-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .allocation-amount {
             font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .allocation-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .allocation-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .allocation-percentage {
+            min-width: 40px;
+            text-align: right;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .asset-details h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .asset-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .summary-card h4 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .summary-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .summary-amount.positive {
+            color: #28a745;
+        }
+
+        .property-list, .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .property-item, .note-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .property-info, .note-info h4 {
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }
+
+        .property-info, .note-info p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .property-value, .note-value {
             font-size: 1.1rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .fund-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .fund-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .fund-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .metric-value.positive {
+            color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .tab-navigation {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: 1 1 50%;
+                font-size: 0.8rem;
+                padding: 12px 15px;
+            }
+            
+            .allocation-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .allocation-info {
+                min-width: auto;
+            }
+            
+            .asset-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .properties-list h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .property-item:last-child {
+            border-bottom: none;
+        }
+
+        .property-info h4 {
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }
+
+        .property-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .property-value {
+            font-size: 1.2rem;
+            font-weight: bold;
             color: #28a745;
         }
 
         .chart-container {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             height: 400px;
         }
 
         .chart-title {
-            text-align: center;
+            color: #1e3c72;
             margin-bottom: 20px;
-            font-size: 1.3rem;
-            color: #495057;
+            font-size: 1.5rem;
         }
 
         @media (max-width: 768px) {
-            .content {
+            .dashboard {
                 grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -150,137 +781,503 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Portfolio Simulator</h1>
-            <p>Calculate and visualize your investment growth over time</p>
+            <h1>Real Estate Portfolio</h1>
+            <p>Track your property investments and portfolio performance</p>
         </div>
-        
-        <div class="content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="initialInvestment">Initial Investment ($)</label>
-                    <input type="number" id="initialInvestment" value="10000" min="0" step="100">
+
+        <div class="dashboard">
+            <div class="portfolio-summary">
+                <h2>Portfolio Overview</h2>
+                
+                <div class="balance-card">
+                    <h3>Total Portfolio Value</h3>
+                    <div class="amount">$34,000</div>
+                    <div class="change positive">+$4,000 (13.3%) this year</div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="quarterlyContribution">Quarterly Contribution ($)</label>
-                    <input type="number" id="quarterlyContribution" value="1000" min="0" step="100">
+
+                <div class="balance-card">
+                    <h3>Cash Balance</h3>
+                    <div class="amount">$185,000</div>
+                    <div class="change">Available for new investments</div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="annualRate">Annual Rate of Return (%)</label>
-                    <input type="number" id="annualRate" value="7" min="0" max="50" step="0.1">
-                </div>
-                
-                <div class="input-group">
-                    <label for="years">Number of Years</label>
-                    <input type="number" id="years" value="20" min="1" max="50" step="1">
-                </div>
-                
-                <button class="calculate-btn" onclick="calculatePortfolio()">Calculate Portfolio Growth</button>
-                
-                <div class="results" id="results" style="display: none;">
-                    <div class="result-item">
-                        <span>Total Invested:</span>
-                        <span id="totalInvested">$0</span>
+
+                <div class="target-widget">
+                    <h3>Investment Target Progress</h3>
+                    <div class="target-info">
+                        <span class="current">$34,000</span>
+                        <span class="target">$50,000</span>
                     </div>
-                    <div class="result-item">
-                        <span>Final Value:</span>
-                        <span id="finalValue">$0</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 68%"></div>
                     </div>
-                    <div class="result-item">
-                        <span>Total Gain:</span>
-                        <span id="totalGain">$0</span>
+                    <div class="progress-text">$16,000 to reach your target</div>
+                </div>
+
+                <div class="dividends-widget">
+                    <h3>Estimated Dividends</h3>
+                    <div class="dividend-cards">
+                        <div class="dividend-card monthly">
+                            <div class="dividend-header">
+                                <h4>Monthly</h4>
+                                <span class="dividend-rate">5.5% APR</span>
+                            </div>
+                            <div class="dividend-amount" id="monthlyAmount">$156</div>
+                            <div class="dividend-note">Based on current portfolio</div>
+                        </div>
+                        <div class="dividend-card annual">
+                            <div class="dividend-header">
+                                <h4>Annual</h4>
+                                <span class="dividend-rate">5.5% APR</span>
+                            </div>
+                            <div class="dividend-amount" id="annualAmount">$1,870</div>
+                            <div class="dividend-note">Projected yearly income</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dividend-calculator">
+                        <h4>Calculate with Additional Investment</h4>
+                        <div class="calculator-input">
+                            <label for="additionalInvestment">Additional Investment ($)</label>
+                            <input type="number" id="additionalInvestment" placeholder="0" min="0" step="100">
+                        </div>
+                        <div class="calculator-results" id="calculatorResults" style="display: none;">
+                            <div class="result-row">
+                                <span>New Monthly Income:</span>
+                                <span class="result-amount" id="newMonthly">$0</span>
+                            </div>
+                            <div class="result-row">
+                                <span>New Annual Income:</span>
+                                <span class="result-amount" id="newAnnual">$0</span>
+                            </div>
+                            <div class="result-row highlight">
+                                <span>Additional Monthly Income:</span>
+                                <span class="result-amount positive" id="additionalMonthly">+$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="next-investment-widget">
+                    <h3>Next Investment Opportunity</h3>
+                    <div class="investment-card">
+                        <div class="investment-header">
+                            <h4>Fix & Flip Property</h4>
+                            <span class="investment-type">Short-term</span>
+                        </div>
+                        <div class="investment-details">
+                            <div class="detail-row">
+                                <span class="label">Location:</span>
+                                <span class="value">Downtown District</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Purchase Price:</span>
+                                <span class="value">$85,000</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Expected ROI:</span>
+                                <span class="value positive">25-35%</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Timeline:</span>
+                                <span class="value">6-8 months</span>
+                            </div>
+                        </div>
+                        <div class="investment-actions">
+                            <button class="action-btn primary">View Details</button>
+                            <button class="action-btn secondary">Save for Later</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upcoming-events">
+                    <h2>Upcoming Events</h2>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="month">Oct</span>
+                                <span class="day">25</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Dividends Paid</h4>
+                                <p>Monthly dividend distribution</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="month">Nov</span>
+                                <span class="day">7</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Secondary Market Opens</h4>
+                                <p>Investment opportunity window begins</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="month">Nov</span>
+                                <span class="day">14</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Secondary Market Closes</h4>
+                                <p>Investment opportunity window ends</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="month">Nov</span>
+                                <span class="day">25</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Dividends Paid</h4>
+                                <p>Monthly dividend distribution</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-tabs">
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" data-tab="overview">Overview</button>
+                        <button class="tab-btn" data-tab="single-family">Single Family</button>
+                        <button class="tab-btn" data-tab="short-term-notes">Short Term Notes</button>
+                        <button class="tab-btn" data-tab="private-credit">Private Credit</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- Overview Tab -->
+                        <div class="tab-panel active" id="overview">
+                            <div class="portfolio-overview">
+                                <h3>Portfolio Allocation</h3>
+                                <div class="allocation-chart">
+                                    <canvas id="allocationChart"></canvas>
+                                </div>
+                                <div class="allocation-breakdown">
+                                    <div class="allocation-item">
+                                        <div class="allocation-info">
+                                            <span class="allocation-label">Single Family Properties</span>
+                                            <span class="allocation-amount">$20,000</span>
+                                        </div>
+                                        <div class="allocation-bar">
+                                            <div class="allocation-fill" style="width: 59%"></div>
+                                        </div>
+                                        <span class="allocation-percentage">59%</span>
+                                    </div>
+                                    <div class="allocation-item">
+                                        <div class="allocation-info">
+                                            <span class="allocation-label">Short Term Notes</span>
+                                            <span class="allocation-amount">$10,000</span>
+                                        </div>
+                                        <div class="allocation-bar">
+                                            <div class="allocation-fill" style="width: 29%"></div>
+                                        </div>
+                                        <span class="allocation-percentage">29%</span>
+                                    </div>
+                                    <div class="allocation-item">
+                                        <div class="allocation-info">
+                                            <span class="allocation-label">Private Credit Fund</span>
+                                            <span class="allocation-amount">$4,000</span>
+                                        </div>
+                                        <div class="allocation-bar">
+                                            <div class="allocation-fill" style="width: 12%"></div>
+                                        </div>
+                                        <span class="allocation-percentage">12%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Single Family Tab -->
+                        <div class="tab-panel" id="single-family">
+                            <div class="asset-details">
+                                <h3>Single Family Properties</h3>
+                                <div class="asset-summary">
+                                    <div class="summary-card">
+                                        <h4>Total Value</h4>
+                                        <div class="summary-amount">$20,000</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Properties</h4>
+                                        <div class="summary-amount">2</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Avg Value</h4>
+                                        <div class="summary-amount">$10,000</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Occupancy</h4>
+                                        <div class="summary-amount">100%</div>
+                                    </div>
+                                </div>
+                                <div class="property-list">
+                                    <div class="property-item">
+                                        <div class="property-info">
+                                            <h4>123 Main Street</h4>
+                                            <p>3BR/2BA • $1,200/month rent</p>
+                                        </div>
+                                        <div class="property-value">$10,000</div>
+                                    </div>
+                                    <div class="property-item">
+                                        <div class="property-info">
+                                            <h4>456 Oak Avenue</h4>
+                                            <p>3BR/2BA • $1,100/month rent</p>
+                                        </div>
+                                        <div class="property-value">$10,000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Short Term Notes Tab -->
+                        <div class="tab-panel" id="short-term-notes">
+                            <div class="asset-details">
+                                <h3>Short Term Notes</h3>
+                                <div class="asset-summary">
+                                    <div class="summary-card">
+                                        <h4>Total Value</h4>
+                                        <div class="summary-amount">$10,000</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Notes</h4>
+                                        <div class="summary-amount">3</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Avg Rate</h4>
+                                        <div class="summary-amount">8.5%</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Avg Term</h4>
+                                        <div class="summary-amount">12 months</div>
+                                    </div>
+                                </div>
+                                <div class="notes-list">
+                                    <div class="note-item">
+                                        <div class="note-info">
+                                            <h4>Note #001</h4>
+                                            <p>12 months • 8.5% APR</p>
+                                        </div>
+                                        <div class="note-value">$3,500</div>
+                                    </div>
+                                    <div class="note-item">
+                                        <div class="note-info">
+                                            <h4>Note #002</h4>
+                                            <p>18 months • 9.0% APR</p>
+                                        </div>
+                                        <div class="note-value">$3,500</div>
+                                    </div>
+                                    <div class="note-item">
+                                        <div class="note-info">
+                                            <h4>Note #003</h4>
+                                            <p>6 months • 8.0% APR</p>
+                                        </div>
+                                        <div class="note-value">$3,000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Private Credit Tab -->
+                        <div class="tab-panel" id="private-credit">
+                            <div class="asset-details">
+                                <h3>Private Credit Fund</h3>
+                                <div class="asset-summary">
+                                    <div class="summary-card">
+                                        <h4>Total Value</h4>
+                                        <div class="summary-amount">$4,000</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>YTD Return</h4>
+                                        <div class="summary-amount positive">+12.5%</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Management Fee</h4>
+                                        <div class="summary-amount">1.5%</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4>Liquidity</h4>
+                                        <div class="summary-amount">Quarterly</div>
+                                    </div>
+                                </div>
+                                <div class="fund-details">
+                                    <div class="fund-metric">
+                                        <span class="metric-label">Fund Performance (YTD)</span>
+                                        <span class="metric-value positive">+12.5%</span>
+                                    </div>
+                                    <div class="fund-metric">
+                                        <span class="metric-label">Annual Management Fee</span>
+                                        <span class="metric-value">1.5%</span>
+                                    </div>
+                                    <div class="fund-metric">
+                                        <span class="metric-label">Next Redemption Date</span>
+                                        <span class="metric-value">Dec 31, 2023</span>
+                                    </div>
+                                    <div class="fund-metric">
+                                        <span class="metric-label">Minimum Investment</span>
+                                        <span class="metric-value">$1,000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="chart-container">
-                <div class="chart-title">Portfolio Growth Over Time</div>
+                <div class="chart-title">Portfolio Growth Over 2 Years</div>
                 <canvas id="portfolioChart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        let portfolioChart = null;
+        // Sample data for the last 24 months (2 years)
+        const months = ['Jan 2022', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+                       'Jan 2023', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const portfolioValues = [0, 500, 1200, 2000, 2800, 3600, 4500, 5400, 6300, 7200, 8200, 9200,
+                               10300, 11500, 12700, 14000, 15300, 16700, 18100, 19500, 21000, 22500, 24000, 25500, 27000, 28500, 30000, 31500, 33000, 34000];
+        const cashBalances = [5000, 4500, 4000, 3500, 3000, 2500, 2000, 1500, 1000, 500, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-        function calculatePortfolio() {
-            // Get input values
-            const initialInvestment = parseFloat(document.getElementById('initialInvestment').value) || 0;
-            const quarterlyContribution = parseFloat(document.getElementById('quarterlyContribution').value) || 0;
-            const annualRate = parseFloat(document.getElementById('annualRate').value) || 0;
-            const years = parseInt(document.getElementById('years').value) || 1;
-
-            // Calculate quarterly rate
-            const quarterlyRate = annualRate / 100 / 4;
-            const totalQuarters = years * 4;
-
-            // Arrays to store data for chart
-            const quarters = [];
-            const portfolioValues = [];
-            const contributions = [];
-
-            // Calculate portfolio value for each quarter
-            let currentValue = initialInvestment;
-            let totalContributed = initialInvestment;
-
-            for (let quarter = 0; quarter <= totalQuarters; quarter++) {
-                quarters.push(quarter);
-                portfolioValues.push(currentValue);
-                contributions.push(totalContributed);
-
-                if (quarter < totalQuarters) {
-                    // Add quarterly contribution
-                    currentValue += quarterlyContribution;
-                    totalContributed += quarterlyContribution;
-                    
-                    // Apply compound interest
-                    currentValue *= (1 + quarterlyRate);
+        // Create the chart
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        const portfolioChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: portfolioValues,
+                    borderColor: '#4facfe',
+                    backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Cash Balance',
+                    data: cashBalances,
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value ($)'
+                        },
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000).toFixed(0) + 'K';
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                elements: {
+                    point: {
+                        radius: 0
+                    }
                 }
             }
+        });
 
-            // Update results display
-            const totalInvested = totalContributed;
-            const finalValue = currentValue;
-            const totalGain = finalValue - totalInvested;
+        // Setup dividend calculator
+        function setupDividendCalculator() {
+            const additionalInvestmentInput = document.getElementById('additionalInvestment');
+            const calculatorResults = document.getElementById('calculatorResults');
+            const newMonthlyElement = document.getElementById('newMonthly');
+            const newAnnualElement = document.getElementById('newAnnual');
+            const additionalMonthlyElement = document.getElementById('additionalMonthly');
 
-            document.getElementById('totalInvested').textContent = `$${totalInvested.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-            document.getElementById('finalValue').textContent = `$${finalValue.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-            document.getElementById('totalGain').textContent = `$${totalGain.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-            document.getElementById('results').style.display = 'block';
+            const currentPortfolio = 34000;
+            const annualRate = 0.055;
 
-            // Create or update chart
-            createChart(quarters, portfolioValues, contributions);
+            additionalInvestmentInput.addEventListener('input', function() {
+                const additionalAmount = parseFloat(this.value) || 0;
+                
+                if (additionalAmount > 0) {
+                    const newPortfolioValue = currentPortfolio + additionalAmount;
+                    const newMonthlyIncome = (newPortfolioValue * annualRate) / 12;
+                    const newAnnualIncome = newPortfolioValue * annualRate;
+                    const additionalMonthlyIncome = newMonthlyIncome - (currentPortfolio * annualRate / 12);
+
+                    newMonthlyElement.textContent = '$' + Math.round(newMonthlyIncome).toLocaleString();
+                    newAnnualElement.textContent = '$' + Math.round(newAnnualIncome).toLocaleString();
+                    additionalMonthlyElement.textContent = '+$' + Math.round(additionalMonthlyIncome).toLocaleString();
+
+                    calculatorResults.style.display = 'block';
+                } else {
+                    calculatorResults.style.display = 'none';
+                }
+            });
         }
 
-        function createChart(quarters, portfolioValues, contributions) {
-            const ctx = document.getElementById('portfolioChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (portfolioChart) {
-                portfolioChart.destroy();
-            }
+        // Initialize calculator on page load
+        window.onload = function() {
+            setupDividendCalculator();
+            setupTabs();
+            createAllocationChart();
+        };
 
-            portfolioChart = new Chart(ctx, {
-                type: 'line',
+        // Setup tab functionality
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and panels
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanels.forEach(panel => panel.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding panel
+                    button.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        }
+
+        // Create allocation pie chart
+        function createAllocationChart() {
+            const ctx = document.getElementById('allocationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
                 data: {
-                    labels: quarters.map(q => `Q${q}`),
+                    labels: ['Single Family Properties', 'Short Term Notes', 'Private Credit Fund'],
                     datasets: [{
-                        label: 'Portfolio Value',
-                        data: portfolioValues,
-                        borderColor: '#4facfe',
-                        backgroundColor: 'rgba(79, 172, 254, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Total Contributions',
-                        data: contributions,
-                        borderColor: '#28a745',
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4
+                        data: [20000, 10000, 4000],
+                        backgroundColor: [
+                            '#4facfe',
+                            '#28a745',
+                            '#ffc107'
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -288,50 +1285,17 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Quarters'
-                            },
-                            beginAtZero: true
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Value ($)'
-                            },
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString('en-US', {maximumFractionDigits: 0});
-                                }
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
                             }
                         }
                     },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    elements: {
-                        point: {
-                            radius: 0
-                        }
-                    }
+                    cutout: '60%'
                 }
             });
         }
-
-        // Calculate on page load with default values
-        window.onload = function() {
-            calculatePortfolio();
-        };
     </script>
 </body>
 </html>
